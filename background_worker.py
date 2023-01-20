@@ -20,7 +20,7 @@ def sync(f):
 
 
 def main():
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host=settings.BROKER_HOST))
+    connection = pika.BlockingConnection(pika.URLParameters('amqp://rabbitmq?connection_attempts=10&retry_delay=10'))
     channel = connection.channel()
 
     channel.queue_declare(queue='hello')
@@ -34,7 +34,7 @@ def main():
                               password=settings.DB_PASSWORD)
         cur = db.cursor()
         body = body.decode('utf-8')[::-1]
-        cur.execute(f"insert into queue values (default, default, '{body}')")
+        cur.execute(f"insert into queue values (default, '{body}')")
         db.commit()
 
     channel.basic_consume(queue='hello', on_message_callback=callback, auto_ack=True)

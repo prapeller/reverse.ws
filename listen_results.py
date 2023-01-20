@@ -10,7 +10,7 @@ async def handler(websocket):
 
 
 async def main():
-    url = 'ws://127.0.0.1:5006/ws'
+    url = 'ws://127.0.0.1:5007/ws'
     try:
         async with websockets.connect(url) as ws:
             await handler(ws)

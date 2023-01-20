@@ -4,4 +4,4 @@ set -o errexit
 set -o pipefail
 set -o nounset
 
-python3 backgfound_worker.py
+python3 background_worker.py

@@ -8,7 +8,7 @@ router = fa.APIRouter()
 def celery_tasks_queue_reverse_text(
         text: str = fa.Body(...),
 ):
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+    connection = pika.BlockingConnection(pika.URLParameters('amqp://rabbitmq?connection_attempts=10&retry_delay=10'))
     channel = connection.channel()
     channel.queue_declare(queue='hello')
     channel.basic_publish(exchange='', routing_key='hello', body=text)

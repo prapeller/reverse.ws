@@ -13,6 +13,9 @@ inspect_postgres:
 inspect_postgres_ip:
 	docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' postgres
 
+inspect_rabbit_ip:
+	docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' rabbitmq
+
 inspect_api_ip:
 	docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' api
 
