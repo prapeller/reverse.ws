@@ -1,0 +1,90 @@
+version: "3.9"
+
+services:
+
+# db to save background_worker results and read them from ws_api
+  postgres:
+    build:
+      context: .
+      dockerfile: ./docker/postgres/Dockerfile
+    container_name: postgres
+    volumes:
+      - local_postgres_data:/var/lib/postgresql/data
+      - local_postgres_data_backups:/backups
+    env_file:
+      - ./.envs/.local
+    networks:
+      - reverse
+
+# message queue broker
+  rabbitmq:
+    image: rabbitmq:3.11-alpine
+    container_name: rabbitmq
+    networks:
+      - reverse
+
+
+# worker to consume messages, to read, reverse and save them
+#  background_worker:
+#    build:
+#      context: .
+#      dockerfile: ./docker/api/Dockerfile
+#    command: /start_worker
+#    container_name: background_worker
+#    volumes:
+#      - .:/app
+#    env_file:
+#      - ./.envs/.local
+#    depends_on:
+#      - rabbitmq
+#      - postgres
+#    networks:
+#      - reverse
+
+# api to produce messages
+  api:
+    build:
+      context: .
+      dockerfile: docker/api/Dockerfile
+    command: /start
+    container_name: api
+    volumes:
+      - .:/app
+    ports:
+      - "5006:8080"
+    env_file:
+      - ./.envs/.local
+    depends_on:
+      - rabbitmq
+      - postgres
+    networks:
+      - reverse
+
+##   web socket api to connect to task's results
+#  ws_api:
+#    build:
+#      context: .
+#      dockerfile: docker/api/Dockerfile
+#    command: /start
+#    container_name: ws_api
+#    volumes:
+#      - .:/app
+#    ports:
+#      - "5007:8080"
+#    env_file:
+#      - ./.envs/.local
+#    depends_on:
+#      - rabbitmq
+#      - postgres
+#    networks:
+#      - reverse
+
+
+networks:
+  reverse:
+    driver: bridge
+
+volumes:
+  local_postgres_data: {}
+  local_postgres_data_backups: {}
+  static_volume:
