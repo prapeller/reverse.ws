@@ -1,4 +1,6 @@
 import asyncio
+import os
+import sys
 
 import websockets
 
@@ -18,5 +20,13 @@ async def main():
     except ConnectionRefusedError:
         print('run command "make build" to run services')
 
+
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print('Interrupted')
+        try:
+            sys.exit(0)
+        except SystemExit:
+            os._exit(0)

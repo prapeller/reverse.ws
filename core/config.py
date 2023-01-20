@@ -17,7 +17,6 @@ class Settings(BaseSettings):
     SERVER_PORT = int(os.getenv('SERVER_PORT', 8080))
 
     BROKER_URL = os.getenv('BROKER_URL')
-    BROKER_HOST = os.getenv('BROKER_HOST')
 
     DB_SCHEME = os.getenv('DB_SCHEME')
     DB_HOST = os.getenv('POSTGRES_HOST')

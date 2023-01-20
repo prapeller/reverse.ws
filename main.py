@@ -1,8 +1,7 @@
 import uvicorn
 from fastapi import FastAPI
 
-import router_tasks
-import router_ws
+from routers import router_tasks, router_ws
 from core.config import settings
 from database import Base, engine
 from database.models import init_models

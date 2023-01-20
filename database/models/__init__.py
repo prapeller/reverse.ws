@@ -1,5 +1,5 @@
-from database.models import queue
+from database.models import text
 
 
 def init_models():
-    from database.models import queue
+    from database.models import text

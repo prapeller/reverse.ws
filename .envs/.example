@@ -1,7 +1,6 @@
 SERVER_HOST=0.0.0.0
 SERVER_PORT=8080
 
-BROKER_HOST=rabbitmq
 BROKER_URL=amqp://rabbitmq:5672
 
 DB_SCHEME=postgresql

@@ -2,9 +2,9 @@ import asyncio
 import functools
 import logging
 
-import psycopg2
-
 from core.config import settings
+from database import SessionLocal
+from database.models.text import TextModel
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +20,8 @@ def sync(f):
 
 
 def main():
-    connection = pika.BlockingConnection(pika.URLParameters('amqp://rabbitmq?connection_attempts=10&retry_delay=10'))
+    connection = pika.BlockingConnection(
+        pika.URLParameters(f'{settings.BROKER_URL}?connection_attempts=10&retry_delay=10'))
     channel = connection.channel()
 
     channel.queue_declare(queue='hello')
@@ -28,14 +29,12 @@ def main():
     @sync
     async def callback(ch, method, properties, body):
         print(" [x] Received %r" % body)
-        db = psycopg2.connect(host=settings.DB_HOST,
-                              database=settings.DB_NAME,
-                              user=settings.DB_USER,
-                              password=settings.DB_PASSWORD)
-        cur = db.cursor()
+        session = SessionLocal()
         body = body.decode('utf-8')[::-1]
-        cur.execute(f"insert into queue values (default, '{body}')")
-        db.commit()
+        new_text = TextModel(text=body)
+        session.add(new_text)
+        session.commit()
+        session.close()
 
     channel.basic_consume(queue='hello', on_message_callback=callback, auto_ack=True)
 
